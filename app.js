@@ -1,53 +1,67 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import notes from "./data/note.js";
+import note from "./data/notes.js";
 import { noteValidator, validate } from "./validators/noteValidator.js";
 import connectDB from "./config/db.js";
 
-connectDB();
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
-dotenv.config();
 
 app.use(cors());
 app.use(express.json());
 
 
-app.get("/notes", (req, res) => {
-  res.json(notes);
+app.get("/notes", async (req, res) => {
+  const notes = await note.find();
+  return (res.json(notes));
 });
 
-app.post("/notes",noteValidator, validate, (req, res) => {
+app.post("/notes",noteValidator, validate, async(req, res) => {
   const { title, content } = req.body;
   const newNote = { title, content };
   // !newNote.title || !newNote.content ? res.status(400).json({ error: "Title and content are required." }) :
-  notes.push(newNote);
+  await (note.create(newNote));
   return res.status(201).json(newNote);
 });
 
-app.put("/notes/:index", (req, res) => {
-  const index = parseInt(req.params.index);
-  const { title, content } = req.body;
-  if (index >= 0 && index < notes.length) {
-    notes[index] = { title, content };
-    res.json(notes[index]);
-  } else {
-    res.status(404).json({ error: "Note not found." });
+app.put("/notes/:id", async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const updatedNote = await note.findByIdAndUpdate(
+      req.params.id,
+      { title, content },
+      { returnDocument: 'after' }
+    );
+    if (!updatedNote) {
+      return res.status(404).json({ error: "Note not found." });
+    }
+    res.json(updatedNote);
+  } catch (error) {
+    res.status(400).json({ error: "Invalid note ID." });
   }
 });
 
-app.delete("/notes/:index", (req, res) => {
-  const index = parseInt(req.params.index);
-  if (index >= 0 && index < notes.length) {
-    const deletedNote = notes.splice(index, 1);
-    res.json(deletedNote[0]);
-  } else {
-    res.status(404).json({ error: "Note not found." });
+app.delete("/notes/:id", async (req, res) => {
+  try {
+    const deletedNote = await note.findByIdAndDelete(req.params.id);
+    if (!deletedNote) {
+      return res.status(404).json({ error: "Note not found." });
+    }
+    res.json(deletedNote);
+  } catch (error) {
+    res.status(400).json({ error: "Invalid note ID." });
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+const startServer = async () => {
+  await connectDB();
+
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+};
+
+startServer();

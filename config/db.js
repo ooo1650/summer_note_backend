@@ -10,7 +10,9 @@ const connectDB = async () => {
 			throw new Error('Missing MongoDB connection string');
 		}
 
-		await mongoose.connect(uri);
+		await mongoose.connect(uri, {
+			dbName: 'projjj'
+		});
 		console.log('MongoDB connected');
 	} catch (error) {
 		console.error('Database connection failed:', error.message);
