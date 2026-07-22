@@ -1,7 +1,7 @@
 $kind: http-request
-name: New Request
-url: http://localhost:3000/notes
-method: POST
+name: UPDATE_NOTES
+url: "{{url}}/notes/0"
+method: PUT
 body:
   type: json
   content: |-
@@ -9,4 +9,4 @@ body:
       "title": "Sample Notess",
       "content": "This is a sample note content1234567."
     }
-order: 4068175333493455
+order: 4452937370956780

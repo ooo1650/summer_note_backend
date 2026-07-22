@@ -1,0 +1,5 @@
+$kind: http-request
+name: DELETE_NOTES
+url: "{{url}}/notes/6a586ad098d038044c48d50d"
+method: DELETE
+order: 4482725252445770

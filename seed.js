@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import sampleNotes from "./data/note.js";
 import connectDB from "./config/db.js";
 import dotenv from "dotenv";
-import Note from "./data/notes.js";
+import Note from "./model/note.js";
 dotenv.config();
 
 await connectDB();

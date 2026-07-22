@@ -1,0 +1,11 @@
+$kind: http-request
+url: http://localhost:3000/notes
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "title": "Sample Notess",
+      "content": "This is a sample note content1234567."
+    }
+order: 4068175333493455
